@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use index;
 use App\Models\News;
 use App\Models\User;
 use App\Models\Category;
@@ -15,14 +14,26 @@ class NewsController extends Controller
     {
         // Ambil semua data berita beserta kategori
         $news = News::with('category')->get();
-        // Ambil semua data pengguna
-        $users = User::all();
-    
-        // Mengembalikan view dengan data berita dan pengguna
-        return view('news.index', compact('news', 'users'));
+        
+        // Ambil berita dengan tampilan terbanyak (top views)
+        $topViewsNews = News::with('category')
+            ->orderByDesc('views')
+            ->take(5) // Misalnya, ambil 5 berita dengan views tertinggi
+            ->get();
+        
+        // Ambil berita terbaru (recent)
+        $recentNews = News::with('category')
+            ->orderByDesc('created_at')
+            ->take(5) // Misalnya, ambil 5 berita terbaru
+            ->get();
+
+        // Ambil semua kategori beserta jumlah berita yang terkait
+        $categories = Category::withCount('news')->get();
+
+        // Mengembalikan view dengan data berita, kategori, top views, dan recent news
+        return view('news.index', compact('news', 'categories', 'topViewsNews', 'recentNews'));
     }
     
-
     // Menampilkan detail berita berdasarkan slug
     public function show($slug)
     {
@@ -35,4 +46,23 @@ class NewsController extends Controller
         // Mengembalikan view dengan data berita
         return view('news.show', compact('newsItem'));
     }
+
+    // Menampilkan berita berdasarkan kategori
+    public function category($slug)
+{
+    // Ambil kategori berdasarkan slug
+    $category = Category::where('slug', $slug)->firstOrFail();
+
+    // Ambil semua berita yang terkait dengan kategori ini
+    $news = News::with('category')
+        ->where('category_id', $category->id)
+        ->get();
+
+    // Ambil semua kategori untuk sidebar atau keperluan lainnya
+    $categories = Category::withCount('news')->get();
+
+    // Mengembalikan view dengan data berita dan kategori yang dipilih
+    return view('news.category', compact('news', 'categories', 'category'));
+}
+
 }

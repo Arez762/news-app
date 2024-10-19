@@ -38,7 +38,6 @@ class UserResource extends Resource
                     ->dehydrateStateUsing(fn($state) => bcrypt($state)),
             ]);
     }
-
     public static function table(Table $table): Table
     {
         return $table

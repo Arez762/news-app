@@ -6,7 +6,6 @@ use App\Filament\Resources\CategoryResource\Pages;
 use App\Filament\Resources\CategoryResource\RelationManagers;
 use App\Models\Category;
 use Filament\Forms;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -28,10 +27,6 @@ class CategoryResource extends Resource
                 TextInput::make('name')
                     ->required()
                     ->label('Category Name'),
-                FileUpload::make('icon')
-                    ->label('icon')
-                    ->image()
-                    ->required(),
                 TextInput::make('slug')
                     ->disabled(),
             ]);
@@ -45,9 +40,6 @@ class CategoryResource extends Resource
                     ->label('Category Name')
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\ImageColumn::make('icon')
-                    ->label('Icon')
-                    ->size(50), // Ukuran tampilan ikon
             ])
             ->filters([
                 //
