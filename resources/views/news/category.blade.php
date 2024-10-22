@@ -43,7 +43,7 @@
 </head>
 
 <body class="bg-[#F3F4F8] font-sans">
-    <section class="text-gray-600 body-font lg:flex lg:flex-row lg:mx-12">
+    <section class="text-gray-600 body-font lg:flex lg:flex-row lg:px-32">
         <div class="lg:w-3/4  items-start p-2">
             <div class="my-4 lg:pl-4 pl-3">
                 <p class="text-lg text-black lg:text-2xl font-bold">Kategori {{ $category->name }}</p>
@@ -52,59 +52,48 @@
             <div class="flex flex-wrap">
                 <div class="row">
                     @foreach ($news as $item)
-                    <div class="lg:w-1/4 md:w-1/2 w-full p-3">
-                        <div class="h-full  border-gray-200 border-opacity-60 rounded-xl shadow-md overflow-hidden">
-                            <a href="{{ route('news.show', $item->slug) }}">
-                                <img class="h-40 w-full object-cover object-center lazyload loading-placeholder transform transition duration-300 hover:scale-105"
-                                    data-src="{{ Storage::url($item->thumbnail) }}" alt="{{ $item->name }}">
-                            </a>
-                            <div class="p-4">
-                                <h2 class="tracking-widest text-xs title-font font-medium text-gray-400 mb-1">
-                                    {{ $item->category->name }}
-                                </h2>
-                                <h1 class="title-font text-base font-medium text-gray-900 mb-2">{{ $item->name }}
-                                </h1>
-                                <p class="leading-relaxed text-sm mb-2">
-                                    {{ Str::limit($item->content, 80) }}
-                                </p>
-                                <div class="flex items-center flex-wrap">
-                                    <a href="{{ route('news.show', $item->slug) }}"
-                                        class="text-orange-500 inline-flex hover:text-orange-600 items-center text-sm md:mb-2 lg:mb-0">
-                                        Baca Selengkapnya
-                                        <svg class="w-4 h-4 ml-1" viewBox="0 0 24 24" stroke="currentColor"
-                                            stroke-width="2" fill="none" stroke-linecap="round"
-                                            stroke-linejoin="round">
-                                            <path d="M5 12h14"></path>
-                                            <path d="M12 5l7 7-7 7"></path>
-                                        </svg>
+                        <div class="lg:w-1/4 md:w-1/2 w-full p-2">
+                            <div class="h-full border-gray-200 border-opacity-60 rounded shadow-md overflow-hidden">
+                                <a href="{{ route('news.show', $item->slug) }}">
+                                    <img class="h-40 w-full object-cover object-center lazyload loading-placeholder transform transition duration-300 hover:scale-105"
+                                        data-src="{{ Storage::url($item->thumbnail) }}" alt="{{ $item->name }}">
+                                </a>
+                                <div class="p-3">
+                                    <h2 class="tracking-widest text-xs title-font font-medium text-gray-400 mb-1">
+                                        {{ $item->category->name }}
+                                    </h2>
+                                    <a href="{{ route('news.show', $item->slug) }}" class="hover:no-underline">
+                                        <h1
+                                            class="title-font text-base font-medium text-gray-900 mb-2 hover:text-gray-500">
+                                            {{ Str::words($item->name, 15) }}
+                                        </h1>
                                     </a>
-                                </div>
-                                <div class="text-gray-400 text-xs mt-2">
-                                    Diunggah {{ \Carbon\Carbon::parse($item->upload_time)->diffForHumans() }}
-                                </div>
-                                <div class="text-gray-400 text-xs mt-2 justify-between flex">
-                                    <span class="text-gray-400 mr-3 inline-flex items-center leading-none text-sm">
-                                        <svg class="w-4 h-4 mr-1" stroke="currentColor" stroke-width="2" fill="none"
-                                            stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                            <circle cx="12" cy="12" r="3"></circle>
-                                        </svg>
-                                        {{ $item->views }} Views
-                                    </span>
-                                    <span class="text-gray-400 inline-flex items-center leading-none text-sm">
-                                        <svg class="w-5 h-5 text-gray-400 aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            fill="none" viewBox="0 0 24 24">
-                                            <path stroke="currentColor" stroke-width="2"
-                                                d="M7 17v1a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1a3 3 0 0 0-3-3h-4a3 3 0 0 0-3 3Zm8-9a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                                        </svg>
-
-                                        {{ $item->user->name }}
-                                    </span>
+                                    <div class="text-gray-400 text-xs mt-2">
+                                        Diunggah {{ \Carbon\Carbon::parse($item->created_at)->format('d F Y') }}
+                                    </div>
+                                    <div class="text-gray-400 text-xs mt-2 justify-between flex">
+                                        <span class="text-gray-400 mr-3 inline-flex items-center leading-none text-sm">
+                                            <svg class="w-4 h-4 mr-1" stroke="currentColor" stroke-width="2"
+                                                fill="none" stroke-linecap="round" stroke-linejoin="round"
+                                                viewBox="0 0 24 24">
+                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                <circle cx="12" cy="12" r="3"></circle>
+                                            </svg>
+                                            {{ $item->views }} Views
+                                        </span>
+                                        <span class="text-gray-400 inline-flex items-center leading-none text-sm">
+                                            <svg class="w-5 h-5 text-gray-400 aria-hidden="true"
+                                                xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                fill="none" viewBox="0 0 24 24">
+                                                <path stroke="currentColor" stroke-width="2"
+                                                    d="M7 17v1a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1a3 3 0 0 0-3-3h-4a3 3 0 0 0-3 3Zm8-9a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                            </svg>
+                                            {{ $item->user->name }}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
                     @endforeach
                 </div>
             </div>
@@ -114,7 +103,8 @@
                     {{ $news->appends(['search' => request('search')])->links() }}
                 </div>
             </div>
-            <a href="{{ route('news.index') }}" class="back-button text-orange-500 hover:text-orange-600">&larr; Kembali ke Daftar Berita</a>
+            <a href="{{ route('news.index') }}" class="back-button text-orange-500 hover:text-orange-600">&larr;
+                Kembali ke Daftar Berita</a>
         </div>
 
 
@@ -147,6 +137,77 @@
                             </li>
                         @endforeach
                     </ul>
+                </div>
+
+                <!-- Berita Terpopuler -->
+                <div class="my-4">
+                    <p class="text-lg text-black lg:text-2xl font-bold">Berita Terpopuler</p>
+                    <div class="w-16 lg:w-20 h-1 bg-orange-500"></div>
+                </div>
+                <div class="space-y">
+                    @foreach ($popularNews as $news)
+                        <div class="border-b border-gray-300 py-1 flex flex-row">
+                            <div class="items-center justify-center flex h-20 w-10 ">
+                                <p
+                                    class="pt-2 text-5xl font-bold flex items-center justify-center text-gray-400 h-full">
+                                    {{ $loop->iteration }}</p>
+                            </div>
+                            <div class="px-4">
+                                <a href="{{ route('news.show', $news->slug) }}"
+                                    class="text-gray-900 hover:no-underline hover:text-gray-500">
+                                    <p class="text-base font-semibold">
+                                        {{ Str::words($news->name, 10) }}
+                                    </p>
+                                </a>
+                                <div class="flex text-xs items-end gap-2 mt-2 justify-between">
+                                    @if ($news->category)
+                                        <span
+                                            class="bg-orange-500 text-white text-xs px-2 py-1 rounded">{{ $news->category->name }}</span>
+                                    @else
+                                        <span class="bg-orange-500 text-white text-xs px-2 py-1 rounded">TANPA
+                                            KATEGORI</span>
+                                    @endif
+                                    <span
+                                        class="text-gray-500 text-xs">{{ \Carbon\Carbon::parse($news->created_at)->format('d F Y') }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
+                <div class="my-4">
+                    <p class="text-lg text-black lg:text-2xl font-bold">Berita Terbaru</p>
+                    <div class="w-16 lg:w-20 h-1 bg-orange-500"></div>
+                </div>
+                <div class="space-y">
+                    @foreach ($recentNews as $news)
+                        <div class="border-b border-gray-300 py-1 flex flex-row">
+                            <div class="items-center justify-center flex h-20 w-8 ">
+                                <p
+                                    class="pt-2 text-5xl font-bold flex items-center justify-center text-gray-400 h-full">
+                                    {{ $loop->iteration }}</p>
+                            </div>
+                            <div class="px-4">
+                                <a href="{{ route('news.show', $news->slug) }}"
+                                    class="text-gray-900 hover:no-underline hover:text-gray-500">
+                                    <p class="text-base font-semibold">
+                                        {{ Str::words($news->name, 10) }}
+                                    </p>
+                                </a>
+                                <div class="flex text-xs items-end gap-2 mt-2 justify-between">
+                                    @if ($news->category)
+                                        <span
+                                            class="bg-orange-500 text-white text-xs px-2 py-1 rounded">{{ $news->category->name }}</span>
+                                    @else
+                                        <span class="bg-orange-500 text-white text-xs px-2 py-1 rounded">TANPA
+                                            KATEGORI</span>
+                                    @endif
+                                    <span
+                                        class="text-gray-500 text-xs">{{ \Carbon\Carbon::parse($news->created_at)->format('d F Y') }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
 
                 <div class="">

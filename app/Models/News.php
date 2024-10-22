@@ -20,6 +20,7 @@ class News extends Model
         'category_id',
         'user_id', // Pastikan user_id ada di fillable untuk mass assignment
         'upload_time',
+        'gallery',
     ];
 
     // Cast agar kolom tertentu diperlakukan sebagai tanggal
@@ -54,4 +55,7 @@ class News extends Model
             }
         });
     }
+    protected $casts = [
+        'gallery' => 'array', // Pastikan kolom gallery di-cast ke array
+    ];
 }

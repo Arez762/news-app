@@ -13,6 +13,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Lazysizes -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js" async></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
         .lazyload {
             opacity: 0;
@@ -43,20 +46,21 @@
 </head>
 
 <body class="bg-[#F3F4F8] font-sans">
-    <section class="w-full lg:px-10">
+    <x-navbar></x-navbar>
+
+    <section class="w-full lg:px-32">
         <!-- hero big grid -->
-        <div class="my-4 lg:pl-4 pl-3 lg:pt-24">
-            <p class="text-lg lg:text-2xl font-bold">Berita Terpopuler</p>
+        <div class="my-4 lg:pl-4 pl-3 lg:pt-36 pt-24">
+            <p class="text-lg lg:mb-2 lg:text-3xl font-bold">Berita Terpopuler</p>
             <div class="w-16 lg:w-20 h-1 bg-orange-500"></div>
         </div>
-        <div class=" rounded-xl lg:mb-10 py-4">
+        <div class=" rounded-xl lg:mb-10 pb-4">
             <div class="xl:container mx-auto px-3 sm:px-4">
                 <!-- big grid 1 -->
                 <div class="flex flex-wrap h-auto lg:h-96 ">
                     <!-- Start left cover -->
-                    <div class="flex-shrink max-w-full w-full lg:w-1/2 h-64 lg:h-full lg:mb-0 gap-2 lg:gap-0 lg:pr-1">
-                        <div class="relative hover-img overflow-hidden h-full">
-
+                    <div class="flex-shrink max-w-full w-full lg:w-1/2 lg:pr-1">
+                        <div class="relative hover-img overflow-hidden h-full rounded">
                             @if ($topViewsNews->isNotEmpty())
                                 @php
                                     $topNews = $topViewsNews->first();
@@ -65,17 +69,13 @@
                                     <img class="max-w-full w-full h-full object-cover transform transition duration-300 hover:scale-105"
                                         src="{{ Storage::url($topNews->thumbnail) }}" alt="{{ $topNews->name }}">
                                 </a>
-                                <div
-                                    class="absolute px-5 pt-8 pb-5 bottom-0 w-full bg-gradient-to-t from-black to-transparent">
+                                <div class="absolute bottom-0 w-full p-4 bg-gradient-to-t from-black to-transparent">
                                     <a href="{{ route('news.show', $topNews->slug) }}">
-                                        <h2 class="text-xl lg:text-3xl font-bold hover:underline text-white mb-3">
+                                        <h2 class="text-base lg:text-xl font-bold hover:underline text-white mb-3">
                                             {{ $topNews->name }}
                                         </h2>
                                     </a>
-                                    <p class="text-gray-100 hidden sm:inline-block">
-                                        {{ Str::limit($topNews->content, 100) }}
-                                    </p>
-                                    <div class="pt-2">
+                                    <div class="">
                                         <div class="text-gray-100">
                                             <div class="inline-block h-3 border-l-2 border-orange-600 mr-2"></div>
                                             {{ $topNews->category->name }}
@@ -90,10 +90,11 @@
 
                     <!-- Start box news -->
                     <div class="flex-shrink max-w-full w-full lg:w-1/2">
-                        <div class="box-one flex flex-wrap h-full">
+                        <div class="box-one flex flex-wrap h-full rounded">
                             @foreach ($topViewsNews->slice(1, 4) as $item)
                                 <article class="flex-shrink max-w-full w-full sm:w-1/2 lg:mb-0">
-                                    <div class="relative hover-img overflow-hidden border-white border-2 h-48 lg:h-56 ">
+                                    <div
+                                        class="relative hover-img overflow-hidden border-white border-2 h-48 lg:h-56 rounded">
 
                                         <a href="{{ route('news.show', $item->slug) }}">
                                             <img class="max-w-full w-full h-full object-cover transform transition duration-300 hover:scale-105"
@@ -126,68 +127,64 @@
     </section>
 
 
-    <section class="text-gray-600 body-font lg:flex lg:flex-row lg:mx-12">
+    <section id="news-terbaru" class="text-gray-600 body-font lg:flex lg:flex-row lg:px-32">
         <div class="lg:w-3/4  items-start p-2">
             <div class="my-4 lg:pl-4 pl-3">
-                <p class="text-lg text-black lg:text-2xl font-bold">Berita Terbaru</p>
+                <p class="text-lg text-black lg:text-3xl font-bold">Berita Terbaru</p>
                 <div class="w-16 lg:w-20 h-1 bg-orange-500"></div>
             </div>
             <div class="flex flex-wrap">
-                @foreach ($news as $item)
-                    <div class="lg:w-1/4 md:w-1/2 w-full p-3">
-                        <div class="h-full  border-gray-200 border-opacity-60 rounded-xl shadow-md overflow-hidden">
-                            <a href="{{ route('news.show', $item->slug) }}">
-                                <img class="h-40 w-full object-cover object-center lazyload loading-placeholder transform transition duration-300 hover:scale-105"
-                                    data-src="{{ Storage::url($item->thumbnail) }}" alt="{{ $item->name }}">
-                            </a>
-                            <div class="p-4">
-                                <h2 class="tracking-widest text-xs title-font font-medium text-gray-400 mb-1">
-                                    {{ $item->category->name }}
-                                </h2>
-                                <h1 class="title-font text-base font-medium text-gray-900 mb-2">{{ $item->name }}
-                                </h1>
-                                <p class="leading-relaxed text-sm mb-2">
-                                    {{ Str::limit($item->content, 80) }}
-                                </p>
-                                <div class="flex items-center flex-wrap">
-                                    <a href="{{ route('news.show', $item->slug) }}"
-                                        class="text-orange-500 inline-flex hover:text-orange-600 items-center text-sm md:mb-2 lg:mb-0">
-                                        Baca Selengkapnya
-                                        <svg class="w-4 h-4 ml-1" viewBox="0 0 24 24" stroke="currentColor"
-                                            stroke-width="2" fill="none" stroke-linecap="round"
-                                            stroke-linejoin="round">
-                                            <path d="M5 12h14"></path>
-                                            <path d="M12 5l7 7-7 7"></path>
-                                        </svg>
+                @if ($news->isEmpty())
+                    <div class="text-center py-10 pl-3">
+                        <p class="text-gray-500 text-lg">Berita tidak ditemukan</p>
+                    </div>
+                @else
+                    @foreach ($news as $item)
+                        <div class="lg:w-1/4 md:w-1/2 w-full p-2">
+                            <div class="h-full border-gray-200 border-opacity-60 rounded shadow-md overflow-hidden">
+                                <a href="{{ route('news.show', $item->slug) }}">
+                                    <img class="h-40 w-full object-cover object-center lazyload loading-placeholder transform transition duration-300 hover:scale-105"
+                                        data-src="{{ Storage::url($item->thumbnail) }}" alt="{{ $item->name }}">
+                                </a>
+                                <div class="p-3">
+                                    <h2 class="tracking-widest text-xs title-font font-medium text-gray-400 mb-1">
+                                        {{ $item->category->name }}
+                                    </h2>
+                                    <a href="{{ route('news.show', $item->slug) }}" class="hover:no-underline">
+                                        <h1
+                                            class="title-font text-base font-medium text-gray-900 mb-2 hover:text-gray-500">
+                                            {{ Str::words($item->name, 15) }}
+                                        </h1>
                                     </a>
-                                </div>
-                                <div class="text-gray-400 text-xs mt-2">
-                                    Diunggah {{ \Carbon\Carbon::parse($item->upload_time)->diffForHumans() }}
-                                </div>
-                                <div class="text-gray-400 text-xs mt-2 justify-between flex">
-                                    <span class="text-gray-400 mr-3 inline-flex items-center leading-none text-sm">
-                                        <svg class="w-4 h-4 mr-1" stroke="currentColor" stroke-width="2" fill="none"
-                                            stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                            <circle cx="12" cy="12" r="3"></circle>
-                                        </svg>
-                                        {{ $item->views }} Views
-                                    </span>
-                                    <span class="text-gray-400 inline-flex items-center leading-none text-sm">
-                                        <svg class="w-5 h-5 text-gray-400 aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            fill="none" viewBox="0 0 24 24">
-                                            <path stroke="currentColor" stroke-width="2"
-                                                d="M7 17v1a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1a3 3 0 0 0-3-3h-4a3 3 0 0 0-3 3Zm8-9a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                                        </svg>
-
-                                        {{ $item->user->name }}
-                                    </span>
+                                    <div class="text-gray-400 text-xs mt-2">
+                                        Diunggah {{ \Carbon\Carbon::parse($item->created_at)->format('d F Y') }}
+                                    </div>
+                                    <div class="text-gray-400 text-xs mt-2 justify-between flex">
+                                        <span class="text-gray-400 mr-3 inline-flex items-center leading-none text-sm">
+                                            <svg class="w-4 h-4 mr-1" stroke="currentColor" stroke-width="2"
+                                                fill="none" stroke-linecap="round" stroke-linejoin="round"
+                                                viewBox="0 0 24 24">
+                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                <circle cx="12" cy="12" r="3"></circle>
+                                            </svg>
+                                            {{ $item->views }} Views
+                                        </span>
+                                        <span class="text-gray-400 inline-flex items-center leading-none text-sm">
+                                            <svg class="w-5 h-5 text-gray-400 aria-hidden="true"
+                                                xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                fill="none" viewBox="0 0 24 24">
+                                                <path stroke="currentColor" stroke-width="2"
+                                                    d="M7 17v1a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1a3 3 0 0 0-3-3h-4a3 3 0 0 0-3 3Zm8-9a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                            </svg>
+                                            {{ $item->user->name }}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                @endforeach
+                    @endforeach
+                @endif
+
             </div>
             <!-- Pagination links -->
             <div class="mt-4 px-4">
@@ -200,18 +197,8 @@
 
 
         <div class=" lg:w-1/4 p-4 ">
+            <div class="lg:py-6"></div>
             <div class="sticky top-4 order-1">
-                <div class="lg: h-24"></div>
-                <div class="w-full">
-                    <div class="relative">
-                        <form action="{{ route('news.index') }}" method="GET">
-                            <input type="search" name="search"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                                placeholder="Cari berita..." aria-label="Search" value="{{ request('search') }}">
-                        </form>
-                    </div>
-                </div>
-
                 <div class="mb-4">
                     <div class="my-4 ">
                         <p class="text-lg text-black lg:text-2xl font-bold">Kategori</p>
@@ -267,7 +254,7 @@
     </section>
 
     {{-- footer start --}}
-    <footer class="bg-[#697077]">
+    <footer class="bg-[#697077] lg:mt-12">
         <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
             <!-- Logo Section -->
             <div class="mb-6 md:mb-0 flex items-center space-x-3 rtl:space-x-reverse">
@@ -297,6 +284,18 @@
         </div>
     </footer>
     {{-- footer end --}}
+
+    <script>
+        // Script untuk toggle menu pada mobile
+        const menuButton = document.getElementById('menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        menuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+
+    <script src="https://unpkg.com/flowbite@1.4.0/dist/flowbite.js"></script>
 </body>
 
 </html>

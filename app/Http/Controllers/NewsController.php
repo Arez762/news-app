@@ -27,6 +27,7 @@ class NewsController extends Controller
 
         $news = $newsQuery->paginate(12); // Batasi 12 berita per halaman
 
+
         // Ambil berita dengan tampilan terbanyak (top views)
         $topViewsNews = News::with('category')
             ->orderByDesc('views')
@@ -49,6 +50,11 @@ class NewsController extends Controller
     // Menampilkan detail berita berdasarkan slug
     public function show($slug)
     {
+        // Ambil berita terbaru (recent)
+        $recentNews = News::with('category')
+            ->orderByDesc('created_at')
+            ->take(3) // Ambil 3 berita terbaru
+            ->get();
         // Ambil berita berdasarkan slug
         $newsItem = News::where('slug', $slug)->with('category')->firstOrFail();
 
@@ -58,14 +64,36 @@ class NewsController extends Controller
         // Ambil semua kategori beserta jumlah berita yang terkait
         $categories = Category::withCount('news')->get();
 
-        // Mengembalikan view dengan data berita dan kategori
-        return view('news.show', compact('newsItem', 'categories'));
+        // Ambil 5 berita terpopuler berdasarkan jumlah views
+        $popularNews = News::with('category')
+            ->orderByDesc('views')
+            ->take(3)
+            ->get();
+
+        // Ambil 5 berita secara random
+        $randomNews = News::with('category')
+            ->inRandomOrder()
+            ->take(8)
+            ->get();
+
+        // Mengembalikan view dengan data berita, kategori, dan berita terpopuler
+        return view('news.show', compact('newsItem', 'categories', 'popularNews', 'randomNews', 'recentNews'));
     }
 
     // Menampilkan berita berdasarkan kategori
     public function category(Request $request, $slug)
     {
+        $popularNews = News::with('category')
+            ->orderByDesc('views')
+            ->take(3)
+            ->get();
         // Ambil kata kunci pencarian dari request
+        // Ambil berita terbaru (recent)
+        $recentNews = News::with('category')
+            ->orderByDesc('created_at')
+            ->take(3) // Ambil 3 berita terbaru
+            ->get();
+
         $search = $request->input('search');
 
         // Ambil kategori berdasarkan slug
@@ -78,8 +106,13 @@ class NewsController extends Controller
 
         // Jika ada kata kunci pencarian, filter berita dalam kategori tersebut
         if ($search) {
-            $newsQuery->where('name', 'like', '%' . $search . '%')
-                ->orWhere('content', 'like', '%' . $search . '%');
+            $newsQuery->where(function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('content', 'like', '%' . $search . '%')
+                    ->orWhereHas('category', function ($query) use ($search) {
+                        $query->where('name', 'like', '%' . $search . '%'); // Cari berdasarkan nama kategori
+                    });
+            });
         }
 
         $news = $newsQuery->paginate(12); // Batasi 12 berita per halaman
@@ -88,6 +121,6 @@ class NewsController extends Controller
         $categories = Category::withCount('news')->get();
 
         // Mengembalikan view dengan data berita dan kategori yang dipilih
-        return view('news.category', compact('news', 'categories', 'category', 'search'));
+        return view('news.category', compact('news', 'categories', 'category', 'search', 'popularNews', 'recentNews'));
     }
 }
