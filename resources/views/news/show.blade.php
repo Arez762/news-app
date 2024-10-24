@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="id">
 
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Berita</title>
+    <title>Search Berita</title>
     <!-- Styles -->
     @vite('resources/css/app.css')
     <link rel="stylesheet" href="src/css/style.css">
@@ -14,16 +13,61 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Lazysizes -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js" async></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            /* Set Poppins font for the body */
+        }
+
+        .lazyload {
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .lazyloaded {
+            opacity: 1;
+        }
+
+        .loading-placeholder {
+            background: #f0f0f0;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        /* For Webkit-based browsers (Chrome, Safari and Opera) */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* For IE, Edge and Firefox */
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            /* IE and Edge */
+            scrollbar-width: none;
+            /* Firefox */
+        }
+    </style>
 </head>
 
-<body class="bg-[#F3F4F8] font-sans">
-
+<body class="bg-[#F3F4F8]">
     <nav x-data="{ mobileMenuIsOpen: false, isVisible: true, lastScrollY: 0 }"
         @scroll.window="if (window.scrollY > lastScrollY && window.scrollY > 100) { isVisible = false } else { isVisible = true; } lastScrollY = window.scrollY"
         :class="{ 'translate-y-0': isVisible, '-translate-y-full': !isVisible }"
-        class="nightwind-prevent-block fixed top-0 left-0 right-0 z-20 flex items-center justify-between w-full p-4 transition-transform duration-300 ease-in-out bg-white bg-opacity-80 backdrop-blur-md"
+        class="nightwind-prevent-block fixed top-0 left-0 right-0 z-20 flex items-center justify-between w-full p-4 transition-transform duration-300 ease-in-out bg-white bg-opacity-80 backdrop-blur-md shadow-md rounded-b-xl"
         aria-label="penguin ui menu">
 
         <div class="flex w-full lg:px-28 items-center ">
@@ -37,24 +81,18 @@
             <ul class="flex-grow items-center flex justify-center gap-6 hidden sm:flex">
                 <li>
                     <a href="/"
-                        class="font-bold nightwind-prevent underline-offset-2 text-gray-700 hover:text-orange-500 focus:outline-none hover:no-underline"
+                        class="font-bold nightwind-prevent underline-offset-2 hover:text-orange-500 focus:outline-none hover:no-underline"
                         aria-current="page">Home</a>
                 </li>
-                <li>
-                    <a href="/news/category/olahraga"
-                        class="font-bold nightwind-prevent underline-offset-2 text-gray-700 hover:text-orange-500 focus:outline-none hover:no-underline"
-                        aria-current="page">Olahraga</a>
-                </li>
-                <li>
-                    <a href="#"
-                        class="font-bold nightwind-prevent underline-offset-2 text-gray-700 hover:text-orange-500 focus:outline-none hover:no-underline"
-                        aria-current="page">Services</a>
-                </li>
-                <li>
-                    <a href="#"
-                        class="font-bold nightwind-prevent underline-offset-2 text-gray-700 hover:text-orange-500 focus:outline-none hover:no-underline"
-                        aria-current="page">Contact</a>
-                </li>
+                @foreach ($categories as $category)
+                    <li>
+                        <a href="{{ route('news.category', $category->slug) }}"
+                            class="font-bold nightwind-prevent underline-offset-2 
+                            {{ request()->is('news/category/' . $category->slug) ? 'text-orange-500' : 'hover:text-orange-500' }} 
+                            focus:outline-none hover:no-underline"
+                            aria-current="page">{{ $category->name }}</a>
+                    </li>
+                @endforeach
             </ul>
             <!-- End Desktop Menu -->
 
@@ -66,12 +104,14 @@
                     <path stroke-linecap="round" stroke-linejoin="round"
                         d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                 </svg>
-                <form action="{{ route('news.index') }}" method="GET"
-                    onsubmit="event.preventDefault(); window.location.href = this.action + '?search=' + this.search.value + '#news-terbaru';">
+                <form action="{{ route('news.search') }}" method="GET">
                     <input type="search" name="search"
                         class="w-full rounded-md border border-neutral-300 bg-neutral-50 py-2.5 pl-10 pr-2 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 disabled:cursor-not-allowed disabled:opacity-75"
                         placeholder="Cari berita..." aria-label="Search" value="{{ request('search') }}">
+                    <button type="submit" class="hidden">Search</button> <!-- Optional button for accessibility -->
                 </form>
+
+
             </div>
             <!-- End Search -->
         </div>
@@ -116,14 +156,14 @@
                                             </h2>
                                             <div class="flex h-auto ml-3">
                                                 <button @click="mobileMenuIsOpen=false"
-                                                    class="absolute top-0 right-0 z-30 flex justify-center px-3 py-2 mt-4 mr-5 space-x-1 text-xs font-medium uppercase border rounded-md border-neutral-200 text-neutral-600 hover:bg-neutral-100">
+                                                    class="absolute top-0 right-0 z-30 flex justify-center px-3 py-2 mt-4 mr-3 space-x-1 text-xs font-medium uppercase border rounded-md border-neutral-200 text-neutral-600 hover:bg-neutral-100">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                                                         viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                                                         class="w-4 h-4">
                                                         <path stroke-linecap="round" stroke-linejoin="round"
                                                             d="M6 18L18 6M6 6l12 12"></path>
                                                     </svg>
-                                                    <span>Close</span>
+                                                    <span></span>
                                                 </button>
                                             </div>
                                         </div>
@@ -133,7 +173,7 @@
                                             <div class="relative h-full overflow-hidden border rounded-md">
 
                                                 <div
-                                                    class="relative ml-3 flex flex-col w-full max-w-64 py-8 text-neutral-600 justify-between sm:flex">
+                                                    class="relative ml-3 flex flex-col w-full max-w-64 text-neutral-600 justify-between sm:flex py-8">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                                                         viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                                                         aria-hidden="true"
@@ -141,12 +181,12 @@
                                                         <path stroke-linecap="round" stroke-linejoin="round"
                                                             d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                                                     </svg>
-                                                    <form action="{{ route('news.index') }}" method="GET"
-                                                        onsubmit="event.preventDefault(); window.location.href = this.action + '?search=' + this.search.value + '#news-terbaru';">
+                                                    <form action="{{ route('news.search') }}" method="GET">
                                                         <input type="search" name="search"
                                                             class="w-full rounded-md border border-neutral-300 bg-neutral-50 py-2.5 pl-10 pr-2 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 disabled:cursor-not-allowed disabled:opacity-75"
                                                             placeholder="Cari berita..." aria-label="Search"
                                                             value="{{ request('search') }}">
+
                                                     </form>
                                                 </div>
 
@@ -156,24 +196,18 @@
                                                         class="flex-col items-center flex justify-center gap-6 sm:flex">
                                                         <li>
                                                             <a href="/"
-                                                                class="font-bold nightwind-prevent underline-offset-2 text-orange-500 hover:text-orange-500 focus:outline-none hover:no-underline"
+                                                                class="font-bold nightwind-prevent underline-offset-2 hover:text-orange-500 focus:outline-none hover:no-underline"
                                                                 aria-current="page">Home</a>
                                                         </li>
-                                                        <li>
-                                                            <a href="#"
-                                                                class="font-bold nightwind-prevent underline-offset-2 hover:text-orange-500 focus:outline-none hover:no-underline"
-                                                                aria-current="page">About</a>
-                                                        </li>
-                                                        <li>
-                                                            <a href="#"
-                                                                class="font-bold nightwind-prevent underline-offset-2 hover:text-orange-500 focus:outline-none hover:no-underline"
-                                                                aria-current="page">Services</a>
-                                                        </li>
-                                                        <li>
-                                                            <a href="#"
-                                                                class="font-bold nightwind-prevent underline-offset-2 hover:text-orange-500 focus:outline-none hover:no-underline"
-                                                                aria-current="page">Contact</a>
-                                                        </li>
+                                                        @foreach ($categories as $category)
+                                                            <li>
+                                                                <a href="{{ route('news.category', $category->slug) }}"
+                                                                    class="font-bold nightwind-prevent underline-offset-2 
+                                                                    {{ request()->is('news/category/' . $category->slug) ? 'text-orange-500' : 'hover:text-orange-500' }} 
+                                                                    focus:outline-none hover:no-underline"
+                                                                    aria-current="page">{{ $category->name }}</a>
+                                                            </li>
+                                                        @endforeach
                                                     </ul>
                                                 </div>
                                             </div>
@@ -188,6 +222,7 @@
         </template>
         <!-- prettier-ignore-end -->
     </nav>
+
 
 
     <section class=" lg:px-32">
@@ -244,11 +279,11 @@
                                 @endforeach
                             </div>
                         @endif
-                        <div class="content text-xs lg:text-sm pt-4">
+                        <div class="content text-xs lg:text-sm pt-4 pb-4">
                             <p>{!! $newsItem->content !!}</p>
                         </div>
-                        <a href="{{ route('news.index') }}"
-                            class="back-button text-orange-500 hover:text-orange-600">&larr; Kembali ke Daftar
+                        <a href="{{ route('news.index') }} "
+                            class="back-button text-orange-500 hover:text-orange-600 lg:py-8 py:py-4">&larr; Kembali ke Daftar
                             Berita</a>
                     </div>
                 </div>
@@ -382,9 +417,9 @@
         </div>
     </section>
 
-    <section class="lg:px-32">
+    <section class="lg:px-32 pt-4">
         <div class="my-4 pl-4 lg:pl-8">
-            <p class="text-lg text-black lg:text-2xl font-bold">Berita Acak</p>
+            <p class="text-xl text-black lg:text-3xl font-bold">Berita Acak</p>
             <div class="w-16 lg:w-20 h-1 bg-orange-500"></div>
         </div>
         <div class="flex flex-wrap px-2 lg:px-4">

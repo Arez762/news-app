@@ -80,7 +80,8 @@ class NewsResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->label('Judul')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->limit(20),
                 Tables\Columns\TextColumn::make('category.name')
                     ->label('Kategori')
                     ->searchable(),

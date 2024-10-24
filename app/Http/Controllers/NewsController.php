@@ -14,6 +14,12 @@ class NewsController extends Controller
         // Ambil kata kunci pencarian dari request
         $search = $request->input('search');
 
+        // Ambil semua berita yang sesuai dengan kata kunci pencarian
+        $newsQuery = News::with('category')->where(function ($query) use ($search) {
+            $query->where('name', 'like', '%' . $search . '%')
+                ->orWhere('content', 'like', '%' . $search . '%');
+        });
+
         // Ambil semua data berita beserta kategori, diurutkan dari yang terbaru
         // Ambil data berita dengan paginasi (12 item per halaman)
         $newsQuery = News::with('category')
@@ -40,11 +46,26 @@ class NewsController extends Controller
             ->take(5) // Ambil 5 berita terbaru
             ->get();
 
+        $recentNewsHeader = News::with('category')
+            ->orderByDesc('created_at')
+            ->take(12) // Ambil 5 berita terbaru
+            ->get();
+
         // Ambil semua kategori beserta jumlah berita yang terkait
         $categories = Category::withCount('news')->get();
 
+        // Ambil 8 berita terbaru untuk setiap kategori
+        $newsByCategory = [];
+        foreach ($categories as $category) {
+            $newsByCategory[$category->id] = News::with('category')
+                ->where('category_id', $category->id)
+                ->orderByDesc('created_at')
+                ->take(8) // Ambil 8 berita terbaru
+                ->get();
+        }
+
         // Mengembalikan view dengan data berita, kategori, top views, dan recent news
-        return view('news.index', compact('news', 'categories', 'topViewsNews', 'recentNews', 'search'));
+        return view('news.index', compact('news', 'categories', 'topViewsNews', 'recentNews', 'search', 'recentNewsHeader', 'newsByCategory'));
     }
 
     // Menampilkan detail berita berdasarkan slug
@@ -122,5 +143,36 @@ class NewsController extends Controller
 
         // Mengembalikan view dengan data berita dan kategori yang dipilih
         return view('news.category', compact('news', 'categories', 'category', 'search', 'popularNews', 'recentNews'));
+    }
+
+    public function search(Request $request)
+    {
+        // Ambil kata kunci pencarian dari request
+        $search = $request->input('search');
+
+        // Ambil semua berita yang sesuai dengan kata kunci pencarian
+        $newsQuery = News::with('category')->where(function ($query) use ($search) {
+            $query->where('name', 'like', '%' . $search . '%')
+                ->orWhere('content', 'like', '%' . $search . '%');
+        });
+
+        $news = $newsQuery->paginate(12); // Batasi 12 berita per halaman
+
+        // Ambil semua kategori untuk sidebar atau keperluan lainnya
+        $categories = Category::withCount('news')->get();
+
+        $popularNews = News::with('category')
+            ->orderByDesc('views')
+            ->take(3)
+            ->get();
+        // Ambil kata kunci pencarian dari request
+        // Ambil berita terbaru (recent)
+        $recentNews = News::with('category')
+            ->orderByDesc('created_at')
+            ->take(3) // Ambil 3 berita terbaru
+            ->get();
+
+        // Mengembalikan view dengan data berita yang sesuai dengan pencarian
+        return view('news.search', compact('news', 'categories', 'search', 'recentNews', 'popularNews'));
     }
 }

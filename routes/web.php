@@ -10,3 +10,5 @@ Route::get('/news/{slug}', [NewsController::class, 'show'])->name('news.show');
 
 // Rute untuk menampilkan berita berdasarkan kategori
 Route::get('/news/category/{slug}', [NewsController::class, 'category'])->name('news.category');
+
+Route::get('/search', [NewsController::class, 'search'])->name('news.search');

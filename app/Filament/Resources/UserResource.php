@@ -22,21 +22,23 @@ class UserResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->required()
-                    ->unique(User::class, 'email'),
-                Forms\Components\TextInput::make('password')
-                    ->password()
-                    ->required()
-                    ->minLength(8)
-                    ->hiddenOn('edit')
-                    ->dehydrateStateUsing(fn($state) => bcrypt($state)),
-            ]);
+        ->schema([
+            Forms\Components\TextInput::make('name')
+                ->required()
+                ->maxLength(255)
+                ->unique(User::class, 'name'),
+            Forms\Components\TextInput::make('email')
+                ->email()
+                ->required()
+                ->unique(User::class, 'email'),
+            Forms\Components\TextInput::make('password')
+                ->password()
+                ->required()
+                ->minLength(8)
+                ->hiddenOn('edit')
+                ->dehydrateStateUsing(fn($state) => bcrypt($state)),
+        ]);
+    
     }
     public static function table(Table $table): Table
     {

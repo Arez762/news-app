@@ -1,7 +1,7 @@
 <nav x-data="{ mobileMenuIsOpen: false, isVisible: true, lastScrollY: 0 }"
     @scroll.window="if (window.scrollY > lastScrollY && window.scrollY > 100) { isVisible = false } else { isVisible = true; } lastScrollY = window.scrollY"
     :class="{ 'translate-y-0': isVisible, '-translate-y-full': !isVisible }"
-    class="nightwind-prevent-block fixed top-0 left-0 right-0 z-20 flex items-center justify-between w-full p-4 transition-transform duration-300 ease-in-out bg-white bg-opacity-80 backdrop-blur-md"
+    class="nightwind-prevent-block fixed top-0 left-0 right-0 z-20 flex items-center justify-between w-full p-4 transition-transform duration-300 ease-in-out bg-white bg-opacity-80 backdrop-blur-md shadow-md rounded-b-xl"
     aria-label="penguin ui menu">
 
     <div class="flex w-full lg:px-28 items-center ">
@@ -12,27 +12,22 @@
         <!-- End Brand Logo -->
 
         <!-- Desktop Menu (diletakkan di tengah) -->
+        <!-- Desktop Menu (diletakkan di tengah) -->
         <ul class="flex-grow items-center flex justify-center gap-6 hidden sm:flex">
             <li>
                 <a href="/"
-                    class="font-bold nightwind-prevent underline-offset-2 text-orange-500 hover:text-orange-500 focus:outline-none hover:no-underline"
+                    class="font-bold nightwind-prevent underline-offset-2 hover:text-orange-500 focus:outline-none hover:no-underline"
                     aria-current="page">Home</a>
             </li>
-            <li>
-                <a href="/news/category/olahraga"
-                    class="font-bold nightwind-prevent underline-offset-2 hover:text-orange-500 focus:outline-none hover:no-underline"
-                    aria-current="page">Olahraga</a>
-            </li>
-            <li>
-                <a href="#"
-                    class="font-bold nightwind-prevent underline-offset-2 hover:text-orange-500 focus:outline-none hover:no-underline"
-                    aria-current="page">Services</a>
-            </li>
-            <li>
-                <a href="#"
-                    class="font-bold nightwind-prevent underline-offset-2 hover:text-orange-500 focus:outline-none hover:no-underline"
-                    aria-current="page">Contact</a>
-            </li>
+            @foreach ($categories as $category)
+                <li>
+                    <a href="{{ route('news.category', $category->slug) }}"
+                        class="font-bold nightwind-prevent underline-offset-2 
+                            {{ request()->is('news/category/' . $category->slug) ? 'text-orange-500' : 'hover:text-orange-500' }} 
+                            focus:outline-none hover:no-underline"
+                        aria-current="page">{{ $category->name }}</a>
+                </li>
+            @endforeach
         </ul>
         <!-- End Desktop Menu -->
 
@@ -44,12 +39,14 @@
                 <path stroke-linecap="round" stroke-linejoin="round"
                     d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
             </svg>
-            <form action="{{ route('news.index') }}" method="GET"
-                onsubmit="event.preventDefault(); window.location.href = this.action + '?search=' + this.search.value + '#news-terbaru';">
+            <form action="{{ route('news.search') }}" method="GET">
                 <input type="search" name="search"
                     class="w-full rounded-md border border-neutral-300 bg-neutral-50 py-2.5 pl-10 pr-2 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 disabled:cursor-not-allowed disabled:opacity-75"
                     placeholder="Cari berita..." aria-label="Search" value="{{ request('search') }}">
+                <button type="submit" class="hidden">Search</button> <!-- Optional button for accessibility -->
             </form>
+
+
         </div>
         <!-- End Search -->
     </div>
@@ -110,44 +107,42 @@
                                     <div class="absolute inset-0 px-4 sm:px-5">
                                         <div class="relative h-full overflow-hidden border rounded-md">
 
-                                            <div class="relative ml-3 flex flex-col w-full max-w-64 py-8 text-neutral-600 justify-between sm:flex">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                                                    stroke="currentColor" aria-hidden="true"
+                                            <div
+                                                class="relative ml-3 flex flex-col w-full max-w-64 text-neutral-600 justify-between sm:flex">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                                    aria-hidden="true"
                                                     class="absolute left-2.5 top-1/2 size-5 -translate-y-1/2 text-neutral-600/50 dark:text-neutral-300/50">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                                                 </svg>
-                                                <form action="{{ route('news.index') }}" method="GET"
-                                                    onsubmit="event.preventDefault(); window.location.href = this.action + '?search=' + this.search.value + '#news-terbaru';">
+                                                <form action="{{ route('news.search') }}" method="GET">
                                                     <input type="search" name="search"
                                                         class="w-full rounded-md border border-neutral-300 bg-neutral-50 py-2.5 pl-10 pr-2 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 disabled:cursor-not-allowed disabled:opacity-75"
-                                                        placeholder="Cari berita..." aria-label="Search" value="{{ request('search') }}">
+                                                        placeholder="Cari berita..." aria-label="Search"
+                                                        value="{{ request('search') }}">
                                                 </form>
                                             </div>
 
 
                                             <div class="">
-                                                <ul class="flex-col items-center flex justify-center gap-6 sm:flex">
+                                                <!-- Desktop Menu (diletakkan di tengah) -->
+                                                <ul
+                                                    class="flex-grow items-center flex justify-center gap-6 sm:flex">
                                                     <li>
                                                         <a href="/"
-                                                            class="font-bold nightwind-prevent underline-offset-2 text-orange-500 hover:text-orange-500 focus:outline-none hover:no-underline"
+                                                            class="font-bold nightwind-prevent underline-offset-2 hover:text-orange-500 focus:outline-none hover:no-underline"
                                                             aria-current="page">Home</a>
                                                     </li>
-                                                    <li>
-                                                        <a href="#"
-                                                            class="font-bold nightwind-prevent underline-offset-2 hover:text-orange-500 focus:outline-none hover:no-underline"
-                                                            aria-current="page">About</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#"
-                                                            class="font-bold nightwind-prevent underline-offset-2 hover:text-orange-500 focus:outline-none hover:no-underline"
-                                                            aria-current="page">Services</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#"
-                                                            class="font-bold nightwind-prevent underline-offset-2 hover:text-orange-500 focus:outline-none hover:no-underline"
-                                                            aria-current="page">Contact</a>
-                                                    </li>
+                                                    @foreach ($categories as $category)
+                                                        <li>
+                                                            <a href="{{ route('news.category', $category->slug) }}"
+                                                                class="font-bold nightwind-prevent underline-offset-2 
+                            {{ request()->is('news/category/' . $category->slug) ? 'text-orange-500' : 'hover:text-orange-500' }} 
+                            focus:outline-none hover:no-underline"
+                                                                aria-current="page">{{ $category->name }}</a>
+                                                        </li>
+                                                    @endforeach
                                                 </ul>
                                             </div>
                                         </div>

@@ -22,6 +22,10 @@
             /* Set Poppins font for the body */
         }
 
+        p {
+            color: white;
+        }
+
         .lazyload {
             opacity: 0;
             transition: opacity 0.3s ease-in-out;
@@ -88,13 +92,12 @@
                     <li>
                         <a href="{{ route('news.category', $category->slug) }}"
                             class="font-bold nightwind-prevent underline-offset-2 
-                            {{ request()->is('news/category/' . $category->slug) ? 'text-orange-500' : 'hover:text-orange-500' }} 
-                            focus:outline-none hover:no-underline"
+                                        {{ request()->is('news/category/' . $category->slug) ? 'text-orange-500' : 'hover:text-orange-500' }} 
+                                        focus:outline-none hover:no-underline"
                             aria-current="page">{{ $category->name }}</a>
                     </li>
                 @endforeach
             </ul>
-
             <!-- End Desktop Menu -->
 
             <!-- Search (diletakkan di kanan) -->
@@ -193,7 +196,9 @@
 
 
                                                 <div class="">
-                                                    <ul class="flex-col items-center flex justify-center gap-6 sm:flex">
+                                                    <!-- Desktop Menu (diletakkan di tengah) -->
+                                                    <ul
+                                                        class="flex-col items-center flex justify-center gap-6 sm:flex">
                                                         <li>
                                                             <a href="/"
                                                                 class="font-bold nightwind-prevent underline-offset-2 hover:text-orange-500 focus:outline-none hover:no-underline"
@@ -203,8 +208,8 @@
                                                             <li>
                                                                 <a href="{{ route('news.category', $category->slug) }}"
                                                                     class="font-bold nightwind-prevent underline-offset-2 
-                                                                    {{ request()->is('news/category/' . $category->slug) ? 'text-orange-500' : 'hover:text-orange-500' }} 
-                                                                    focus:outline-none hover:no-underline"
+                            {{ request()->is('news/category/' . $category->slug) ? 'text-orange-500' : 'hover:text-orange-500' }} 
+                            focus:outline-none hover:no-underline"
                                                                     aria-current="page">{{ $category->name }}</a>
                                                             </li>
                                                         @endforeach
@@ -223,80 +228,86 @@
         <!-- prettier-ignore-end -->
     </nav>
 
-    <div class="lg:py-16 py-12"></div>
+    <div class="py-16"></div>
 
-    <section class="text-gray-600 body-font lg:flex lg:flex-row lg:px-32 px-4">
-        <div class="lg:w-3/4  items-start p-2">
-            <div class="my-4 lg:pl-4">
-                <p class="text-lg text-black lg:text-2xl font-bold">Kategori {{ $category->name }}</p>
-                <div class="w-16 lg:w-20 h-1 bg-orange-500"></div>
-            </div>
-            <div class="flex flex-wrap">
-                <div class="row">
-                    @foreach ($news as $item)
-                        <div class="lg:w-1/4 md:w-1/2 w-full p-2">
-                            <div class="h-full border-gray-200 border-opacity-60 rounded shadow-md overflow-hidden">
-                                <a href="{{ route('news.show', $item->slug) }}">
-                                    <img class="h-40 w-full object-cover object-center lazyload loading-placeholder transform transition duration-300 hover:scale-105"
-                                        data-src="{{ Storage::url($item->thumbnail) }}" alt="{{ $item->name }}">
-                                </a>
-                                <div class="p-3">
-                                    <h2 class="tracking-widest text-xs title-font font-medium text-gray-400 mb-1">
-                                        {{ $item->category->name }}
-                                    </h2>
-                                    <a href="{{ route('news.show', $item->slug) }}" class="hover:no-underline">
-                                        <h1
-                                            class="title-font text-base font-medium text-gray-900 mb-2 hover:text-gray-500">
-                                            {{ Str::words($item->name, 15) }}
-                                        </h1>
+    <section class="text-gray-600 body-font lg:flex lg:flex-row lg:px-32">
+        <div class="flex flex-col lg:w-3/4">
+            <div id="news-terbaru" class="items-start p-2">
+                <div class="my-4 lg:pl-4 pl-3">
+                    <p class="text-lg text-black lg:text-3xl font-bold">Searching :
+                        "{{ request('search') }}"</p>
+                    <div class="w-16 lg:w-20 h-1 bg-orange-500"></div>
+                </div>
+                <div class="flex flex-wrap">
+                    @if ($news->isEmpty())
+                        <div class="text-center py-10 pl-3">
+                            <p class="text-gray-500 text-lg">Berita tidak ditemukan</p>
+                        </div>
+                    @else
+                        @foreach ($news as $item)
+                            <div class="lg:w-1/4 md:w-1/2 w-full p-2">
+                                <div
+                                    class="h-full border-gray-200 border-opacity-60 rounded shadow-md overflow-hidden">
+                                    <a href="{{ route('news.show', $item->slug) }}">
+                                        <img class="h-40 w-full object-cover object-center lazyload loading-placeholder transform transition duration-300 hover:scale-105"
+                                            data-src="{{ Storage::url($item->thumbnail) }}"
+                                            alt="{{ $item->name }}">
                                     </a>
-                                    <div class="text-gray-400 text-xs mt-2">
-                                        Diunggah {{ \Carbon\Carbon::parse($item->created_at)->format('d F Y') }}
-                                    </div>
-                                    <div class="text-gray-400 text-xs mt-2 justify-between flex">
-                                        <span class="text-gray-400 mr-3 inline-flex items-center leading-none text-sm">
-                                            <svg class="w-4 h-4 mr-1" stroke="currentColor" stroke-width="2"
-                                                fill="none" stroke-linecap="round" stroke-linejoin="round"
-                                                viewBox="0 0 24 24">
-                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                                <circle cx="12" cy="12" r="3"></circle>
-                                            </svg>
-                                            {{ $item->views }} Views
-                                        </span>
-                                        <span class="text-gray-400 inline-flex items-center leading-none text-sm">
-                                            <svg class="w-5 h-5 text-gray-400 aria-hidden="true"
-                                                xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                fill="none" viewBox="0 0 24 24">
-                                                <path stroke="currentColor" stroke-width="2"
-                                                    d="M7 17v1a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1a3 3 0 0 0-3-3h-4a3 3 0 0 0-3 3Zm8-9a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                                            </svg>
-                                            {{ $item->user->name }}
-                                        </span>
+                                    <div class="p-3">
+                                        <h2 class="tracking-widest text-xs title-font font-medium text-gray-400 mb-1">
+                                            {{ $item->category->name }}
+                                        </h2>
+                                        <a href="{{ route('news.show', $item->slug) }}" class="hover:no-underline">
+                                            <h1
+                                                class="title-font text-base font-medium text-gray-900 mb-2 hover:text-gray-500">
+                                                {{ Str::words($item->name, 15) }}
+                                            </h1>
+                                        </a>
+                                        <div class="text-gray-400 text-xs mt-2">
+                                            Diunggah {{ \Carbon\Carbon::parse($item->created_at)->format('d F Y') }}
+                                        </div>
+                                        <div class="text-gray-400 text-xs mt-2 justify-between flex">
+                                            <span
+                                                class="text-gray-400 mr-3 inline-flex items-center leading-none text-sm">
+                                                <svg class="w-4 h-4 mr-1" stroke="currentColor" stroke-width="2"
+                                                    fill="none" stroke-linecap="round" stroke-linejoin="round"
+                                                    viewBox="0 0 24 24">
+                                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                    <circle cx="12" cy="12" r="3"></circle>
+                                                </svg>
+                                                {{ $item->views >= 1000 ? number_format($item->views / 1000, 1) . 'k' : $item->views }}
+                                                Views
+                                            </span>
+                                            <span class="text-gray-400 inline-flex items-center leading-none text-sm">
+                                                <svg class="w-5 h-5 text-gray-400" aria-hidden="true"
+                                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    fill="none" viewBox="0 0 24 24">
+                                                    <path stroke="currentColor" stroke-width="2"
+                                                        d="M7 17v1a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1a3 3 0 0 0-3-3h-4a3 3 0 0 0-3 3Zm8-9a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                                </svg>
+                                                {{ $item->user->name }}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                        @endforeach
+                        <!-- Pagination links -->
+                        <div class="mt-4 px-4">
+                            <div class="mt-4 px-4">
+                                {{ $news->appends(['search' => request('search')])->links() }}
+                            </div>
                         </div>
-                    @endforeach
+                    @endif
                 </div>
             </div>
-            <!-- Pagination links -->
-            <div class="mt-4 px-4">
-                <div class="mt-4 px-4">
-                    {{ $news->appends(['search' => request('search')])->links() }}
-                </div>
-            </div>
-            <a href="{{ route('news.index') }}" class="back-button text-orange-500 hover:text-orange-600">&larr;
-                Kembali ke Daftar Berita</a>
         </div>
 
-
-        <div class=" lg:w-1/4 p-4 ">
+        <div class="lg:w-1/4 p-4">
+            <div class="lg:py-6"></div>
             <div class="sticky top-4 order-1">
-                <div class="w-full">
-                </div>
-
-                <div class="mb-4 lg:pt-12 pt-4">
-                    <div class="my-4 ">
+                <div class="mb-4">
+                    <div class="my-4">
                         <p class="text-lg text-black lg:text-2xl font-bold">Kategori</p>
                         <div class="w-16 lg:w-20 h-1 bg-orange-500"></div>
                     </div>
@@ -313,7 +324,6 @@
                     </ul>
                 </div>
 
-                <!-- Berita Terpopuler -->
                 <div class="my-4">
                     <p class="text-lg text-black lg:text-2xl font-bold">Berita Terpopuler</p>
                     <div class="w-16 lg:w-20 h-1 bg-orange-500"></div>
@@ -329,7 +339,7 @@
                             <div class="px-4">
                                 <a href="{{ route('news.show', $news->slug) }}"
                                     class="text-gray-900 hover:no-underline hover:text-gray-500">
-                                    <p class="text-base font-semibold">
+                                    <p class="text-base font-semibold text-black">
                                         {{ Str::words($news->name, 10) }}
                                     </p>
                                 </a>
@@ -338,7 +348,7 @@
                                         <span
                                             class="bg-orange-500 text-white text-xs px-2 py-1 rounded">{{ $news->category->name }}</span>
                                     @else
-                                        <span class="bg-orange-500 text-white text-xs px-2 py-1 rounded">TANPA
+                                        <span class="bg-orange-500 text-white text-xs px-2 py-1  rounded">TANPA
                                             KATEGORI</span>
                                     @endif
                                     <span
@@ -364,7 +374,7 @@
                             <div class="px-4">
                                 <a href="{{ route('news.show', $news->slug) }}"
                                     class="text-gray-900 hover:no-underline hover:text-gray-500">
-                                    <p class="text-base font-semibold">
+                                    <p class="text-base font-semibold text-gray-900">
                                         {{ Str::words($news->name, 10) }}
                                     </p>
                                 </a>
@@ -390,31 +400,28 @@
                         <div class="w-16 lg:w-20 h-1 bg-orange-500"></div>
                     </div>
                     <div class="flex flex-row gap-2">
-                        <svg class="w-8 h-8 text-gray-800  aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                        <svg class="w-8 h-8 text-gray-800 aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                             width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                             <path fill-rule="evenodd"
                                 d="M13.135 6H15V3h-1.865a4.147 4.147 0 0 0-4.142 4.142V9H7v3h2v9.938h3V12h2.021l.592-3H12V6.591A.6.6 0 0 1 12.592 6h.543Z"
                                 clip-rule="evenodd" />
                         </svg>
 
-                        <svg class="w-8 h-8 text-gray-800  aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                        <svg class="w-8 h-8 text-gray-800 aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                             width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path fill="currentColor" fill-rule="evenodd"
                                 d="M3 8a5 5 0 0 1 5-5h8a5 5 0 0 1 5 5v8a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5V8Zm5-3a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3H8Zm7.597 2.214a1 1 0 0 1 1-1h.01a1 1 0 1 1 0 2h-.01a1 1 0 0 1-1-1ZM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm-5 3a5 5 0 1 1 10 0 5 5 0 0 1-10 0Z"
                                 clip-rule="evenodd" />
                         </svg>
 
-                        <svg class="w-8 h-8 text-gray-800  aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                        <svg class="w-8 h-8 text-gray-800 aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                             width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                             <path fill-rule="evenodd"
                                 d="M21.7 8.037a4.26 4.26 0 0 0-.789-1.964 2.84 2.84 0 0 0-1.984-.839c-2.767-.2-6.926-.2-6.926-.2s-4.157 0-6.928.2a2.836 2.836 0 0 0-1.983.839 4.225 4.225 0 0 0-.79 1.965 30.146 30.146 0 0 0-.2 3.206v1.5a30.12 30.12 0 0 0 .2 3.206c.094.712.364 1.39.784 1.972.604.536 1.38.837 2.187.848 1.583.151 6.731.2 6.731.2s4.161 0 6.928-.2a2.844 2.844 0 0 0 1.985-.84 4.27 4.27 0 0 0 .787-1.965 30.12 30.12 0 0 0 .2-3.206v-1.516a30.672 30.672 0 0 0-.202-3.206Zm-11.692 6.554v-5.62l5.4 2.819-5.4 2.801Z"
                                 clip-rule="evenodd" />
                         </svg>
                     </div>
-
-                    <div class="h-20">
-
-                    </div>
+                    <div class="h-20"></div>
                 </div>
             </div>
         </div>
@@ -452,9 +459,6 @@
     </footer>
     {{-- footer end --}}
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 
 </html>
