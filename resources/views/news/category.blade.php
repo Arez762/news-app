@@ -84,15 +84,23 @@
                         class="font-bold nightwind-prevent underline-offset-2 hover:text-orange-500 focus:outline-none hover:no-underline"
                         aria-current="page">Home</a>
                 </li>
-                @foreach ($categories as $category)
+                <ul class="flex-grow items-center flex justify-center gap-6 hidden sm:flex">
                     <li>
-                        <a href="{{ route('news.category', $category->slug) }}"
-                            class="font-bold nightwind-prevent underline-offset-2 
-                            {{ request()->is('news/category/' . $category->slug) ? 'text-orange-500' : 'hover:text-orange-500' }} 
-                            focus:outline-none hover:no-underline"
-                            aria-current="page">{{ $category->name }}</a>
+                        <a href="/"
+                            class="font-bold nightwind-prevent underline-offset-2 hover:text-orange-500 focus:outline-none hover:no-underline"
+                            aria-current="page">Home</a>
                     </li>
-                @endforeach
+                    @foreach ($categories as $category)
+                        <li>
+                            <a href="{{ route('news.category', $category->slug) }}"
+                                class="font-bold nightwind-prevent underline-offset-2 
+                                {{ request()->is('news/category/' . $category->slug) ? 'text-orange-500 hover:text-orange-500' : 'hover:text-orange-500' }} 
+                                focus:outline-none hover:no-underline"
+                                aria-current="page">{{ $category->name }}</a>
+                        </li>
+                    @endforeach
+                </ul>
+                
             </ul>
 
             <!-- End Desktop Menu -->
@@ -193,7 +201,8 @@
 
 
                                                 <div class="">
-                                                    <ul class="flex-col items-center flex justify-center gap-6 sm:flex">
+                                                    <ul
+                                                        class="flex-col items-center flex justify-center gap-6 sm:flex">
                                                         <li>
                                                             <a href="/"
                                                                 class="font-bold nightwind-prevent underline-offset-2 hover:text-orange-500 focus:outline-none hover:no-underline"
@@ -228,9 +237,11 @@
     <section class="text-gray-600 body-font lg:flex lg:flex-row lg:px-32 px-4">
         <div class="lg:w-3/4  items-start p-2">
             <div class="my-4 lg:pl-4">
-                <p class="text-lg text-black lg:text-2xl font-bold">Kategori {{ $category->name }}</p>
+                <p class="text-lg text-black lg:text-2xl font-bold">Kategori: {{ $news->first()->category->name }}</p>
                 <div class="w-16 lg:w-20 h-1 bg-orange-500"></div>
             </div>
+
+
             <div class="flex flex-wrap">
                 <div class="row">
                     @foreach ($news as $item)

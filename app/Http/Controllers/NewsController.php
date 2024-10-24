@@ -104,6 +104,8 @@ class NewsController extends Controller
     // Menampilkan berita berdasarkan kategori
     public function category(Request $request, $slug)
     {
+        // Debug: Tampilkan data kategori
+        
         $popularNews = News::with('category')
             ->orderByDesc('views')
             ->take(3)
@@ -119,6 +121,7 @@ class NewsController extends Controller
 
         // Ambil kategori berdasarkan slug
         $category = Category::where('slug', $slug)->firstOrFail();
+         // Ini akan menghentikan eksekusi dan menampilkan data kategori
 
         // Ambil semua berita yang terkait dengan kategori ini, diurutkan dari yang terbaru
         $newsQuery = News::with('category')
