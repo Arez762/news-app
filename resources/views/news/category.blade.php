@@ -100,7 +100,7 @@
                         </li>
                     @endforeach
                 </ul>
-                
+
             </ul>
 
             <!-- End Desktop Menu -->
@@ -234,7 +234,7 @@
 
     <div class="lg:py-16 py-12"></div>
 
-    <section class="text-gray-600 body-font lg:flex lg:flex-row lg:px-32 px-4">
+    <section class="text-gray-600 body-font lg:flex lg:flex-row lg:mx-32 ">
         <div class="lg:w-3/4  items-start p-2">
             <div class="my-4 lg:pl-4">
                 <p class="text-lg text-black lg:text-2xl font-bold">Kategori: {{ $news->first()->category->name }}</p>

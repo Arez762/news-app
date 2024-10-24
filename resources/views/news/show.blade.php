@@ -242,31 +242,36 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="text-sm mb-4 text-gray-700 flex flex-row items-center">
-                            <span
-                                class="bg-orange-500 text-white text-xs px-2 py-1 rounded mr-3">{{ $newsItem->category->name }}</span>
-                            <span class="mr-3"> {{ $newsItem->created_at->format('d F Y') }}</span>
-                            <span class="mr-3 inline-flex items-center leading-none text-sm">
-                                <svg class="w-6 h-6 text-gray-500" aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
-                                    viewBox="0 0 24 24">
-                                    <path stroke="currentColor" stroke-width="2"
-                                        d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z" />
-                                    <path stroke="currentColor" stroke-width="2"
-                                        d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                                </svg>
-                                {{ $newsItem->views }}
-                            </span>
-                            <span class="mr-3 inline-flex items-center leading-none text-sm">
-                                <svg class="w-5 h-5 text-gray-500 aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
-                                    viewBox="0 0 24 24">
-                                    <path stroke="currentColor" stroke-width="2"
-                                        d="M7 17v1a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1a3 3 0 0 0-3-3h-4a3 3 0 0 0-3 3Zm8-9a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                                </svg>
-                                {{ $newsItem->user->name }}
-                            </span>
+                        <div class="text-sm mb-4 text-gray-700 flex flex-col lg:flex-row lg:items-center">
+                            <div class="py-2 lg:py-0 lg:mr-3">
+                                <span
+                                    class="bg-orange-500 text-white text-xs px-2 py-1 rounded">{{ $newsItem->category->name }}</span>
+                            </div>
+                            <div class="flex flex-row items-center justify-between ">
+                                <span class="mr-3">{{ $newsItem->created_at->format('d F Y') }}</span>
+                                <span class="mr-3 inline-flex items-center leading-none text-sm">
+                                    <svg class="w-6 h-6 text-gray-500" aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        fill="none" viewBox="0 0 24 24">
+                                        <path stroke="currentColor" stroke-width="2"
+                                            d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z" />
+                                        <path stroke="currentColor" stroke-width="2"
+                                            d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                    </svg>
+                                    {{ $newsItem->views }}
+                                </span>
+                                <span class="mr-3 inline-flex items-center leading-none text-sm">
+                                    <svg class="w-5 h-5 text-gray-500" aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        fill="none" viewBox="0 0 24 24">
+                                        <path stroke="currentColor" stroke-width="2"
+                                            d="M7 17v1a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1a3 3 0 0 0-3-3h-4a3 3 0 0 0-3 3Zm8-9a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                    </svg>
+                                    {{ $newsItem->user->name }}
+                                </span>
+                            </div>
                         </div>
+
                         <!-- Thumbnail utama -->
                         <img src="{{ Storage::url($newsItem->thumbnail) }}" alt="{{ $newsItem->name }}"
                             class="w-full h-auto rounded">
@@ -283,7 +288,8 @@
                             <p>{!! $newsItem->content !!}</p>
                         </div>
                         <a href="{{ route('news.index') }} "
-                            class="back-button text-orange-500 hover:text-orange-600 lg:py-8 py:py-4">&larr; Kembali ke Daftar
+                            class="back-button text-orange-500 hover:text-orange-600 lg:py-8 py:py-4">&larr; Kembali ke
+                            Daftar
                             Berita</a>
                     </div>
                 </div>

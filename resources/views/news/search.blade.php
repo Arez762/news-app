@@ -275,8 +275,16 @@
                                                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                                     <circle cx="12" cy="12" r="3"></circle>
                                                 </svg>
-                                                {{ $item->views >= 1000 ? number_format($item->views / 1000, 1) . 'k' : $item->views }}
-                                                Views
+                                                @php
+                                                    $formattedViews =
+                                                        $item->views >= 1000
+                                                            ? rtrim(
+                                                                    rtrim(number_format($item->views / 1000, 1), '0'),
+                                                                    '.',
+                                                                ) . 'k'
+                                                            : $item->views;
+                                                @endphp
+                                                {{ $formattedViews }} Views
                                             </span>
                                             <span class="text-gray-400 inline-flex items-center leading-none text-sm">
                                                 <svg class="w-5 h-5 text-gray-400" aria-hidden="true"
